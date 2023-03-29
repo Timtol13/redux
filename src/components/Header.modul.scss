@@ -1,0 +1,39 @@
+nav{
+    background-color: #eee;
+    margin-top: 0;
+    height: 70px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    ul, div{
+        margin-top:0;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        list-style: none;
+        margin-left: 20px;
+        li{
+            flex: 1 1 0;
+            a, button{
+                padding: 8px;
+                border: #000 solid 1px;
+                color: #000;
+                border-radius: 10px;
+                color: #000;
+                text-decoration: none;
+                transition: .5s;
+                img{
+                    transition: .5s;
+                }
+                &:hover{
+                    border: 1px #000 solid;
+                    background-color: #000;
+                    color: #fff;
+                    img{
+                        filter: invert(1);
+                    }
+                }
+            }
+        }
+    }
+}
