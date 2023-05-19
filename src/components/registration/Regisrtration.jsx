@@ -1,28 +1,37 @@
 import React from 'react'
 import {useFormik} from 'formik'
 import { createStore } from '../../redux/store/createStore'
-import { registration } from '../../redux/action/action'
 import { authReducer } from '../../redux/reducers/rootReducer'
-import { registration as reg } from '../../redux/bll/authReducer'
+import { authAPI } from '../api/api'
+import './Registration.modul.scss'
 
 export const Registration = () => {
-    const store = createStore(authReducer, {'login': '', 'password': ''})
     const formik = useFormik({
         initialValues:{
             'login': '',
-            'password': ''
+            'password': '',
+            'name': '',
+            'surname': '',
+            'description': '',
         },
         onSubmit: (values) => {
-            console.log(values.login + " " + values.password)
-            store.dispatch(reg({values}))
+            authAPI.registration(values)
+            window.location.replace(`/profile/${values.login}`)
         }
     })
     return (
         <div>
+            <div className={'image'}>
+                    <img src={'Devices.png'} alt={'Oops'} width={890} />
+                </div>
             <form onSubmit={formik.handleSubmit}>
                 <input placeholder={'Login'} {...formik.getFieldProps('login')}/>
                 <input placeholder={'Password'} type={'password'} {...formik.getFieldProps('password')}/>
+                <input placeholder={'Name'} type={'text'} {...formik.getFieldProps('name')}/>
+                <input placeholder={'Surname'} type={'text'} {...formik.getFieldProps('surname')}/>
+                <textarea placeholder={'Description'} {...formik.getFieldProps('description')}/>
                 <button type={'submit'}>Зарегестрироваться</button>
+                <h>Уже есть аккаунт? <a href={'/login'}>Войдите!</a></h>
             </form>
         </div>
     )

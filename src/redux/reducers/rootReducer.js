@@ -16,12 +16,13 @@ export function authReducer(state, action){
                             'password': action.payload.password 
                         }
                         console.log("Is loggin")
-                        localStorage.setItem('user', JSON.stringify(user_login))
-                        localStorage.setItem('isLoggin', true)
+                        sessionStorage.setItem('user', JSON.stringify(user_login))
+                        sessionStorage.setItem('isLoggin', true)
+                        window.location.replace(`/profile/${user_login.login}`)
                     }
-                }
+                } else { console.log("Uncorrect login") }
             })
-            window.location.replace('/')
+            
             break
         }
         case REGISTRATION:{
