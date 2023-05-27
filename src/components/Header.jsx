@@ -6,7 +6,7 @@ export const Header = () => {
     const nav = useNavigate()
     const logg = sessionStorage.getItem('isLoggin')
     const us = sessionStorage.getItem('user')
-    const me = us? JSON.parse(sessionStorage.getItem('user')): ''
+    const me = us? JSON.parse(sessionStorage.getItem('user')).login: ''
     const logoutHandler = () => {
         sessionStorage.setItem('isLoggin', 'false')
         sessionStorage.setItem('user', JSON.stringify({}))

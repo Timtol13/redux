@@ -38,6 +38,9 @@ export const authAPI = {
     }
 }
 export const MessagesAPI = {
+    getUsers(){
+        return instance.get('/getUsers')
+    },
     getMessages(userFrom, userTo){
         return instance.get(`/getMessages/${userFrom}/${userTo}`)
     }
