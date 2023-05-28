@@ -1,0 +1,32 @@
+.homeMainDiv{
+    display: flex;
+    flex-direction: column;
+    .newsline{
+        display: flex;
+        flex-direction: column;
+        width: 760px;
+        height: 100%;
+        border-radius: 20px;
+        padding: 0;
+        box-shadow: 9px 9px 0 0 #aaa;
+        border: 1px solid #000;
+        
+    }
+    .createPost{
+        align-self: flex-end;
+        width: 100px;
+        height: 40px;
+        border-radius: 10px;
+        color: #000;
+        border: none;
+        background-color: #ccc;
+        transition: .3s;
+        &:hover{
+            transform: translateY(-3px);
+            transform: translateX(-3px);
+            background-color: #ffb6c1;
+            box-shadow: 3px 3px 0 0 #ccc;
+            color: #fff;
+        }
+    }
+}

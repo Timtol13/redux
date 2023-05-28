@@ -5,22 +5,22 @@
     height: 100%;
     margin-top: 60px;
     border-radius: 20px;
+    padding: 1px;
     box-shadow: 9px 9px 0 0 #aaa;
-    padding: 9px;
     border: 1px solid #000;
     .message{
-        border: 1px solid #000;
+        border: 1px solid #ccc;
         text-decoration: none;
+        height: 60px;
         color: #000;
         &:first-child{
             border-radius: 20px 20px 0 0;
-            
         }
         background-color: #eee;
         margin: 0;
         margin-bottom: 3px;
         border-radius: 4px;
-        width: 100%;
+        width: 99.9%;
         display: flex;
         flex-direction: column;
         h3{

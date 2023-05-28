@@ -4,20 +4,22 @@ import { MessagesAPI } from '../api/api'
 
 export const Messenger = () => {
   const [chats, setChats] = useState([])
+  const [user, setUser] = useState('')
 
   useEffect(() => {
     MessagesAPI.getUsers().then(response => { setChats(response.data) })
+    setUser(JSON.parse(sessionStorage.getItem('user')).login)
   }, [])
   return (
     <div className={'allMessages'}>
-      {chats.map(mes => (
-        <a href={`/chat/${mes.user}`} className={'message'} key={mes.user}>
-          <h3>{mes.user}</h3>
-          <h5>
-            {mes.lastMessage} {mes.date}
-          </h5>
-        </a>
-      ))}
+      {chats.map(mes => {
+        if (mes.login !== user.login){
+          return (
+            <a href={`/chat/${mes.login}`} className={'message'} key={mes.user}>
+              <h3>{mes.Username} {mes.Surname}</h3>
+            </a>
+            )}
+      })}
     </div>
   )
 }

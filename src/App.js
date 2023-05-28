@@ -6,14 +6,17 @@ import {Header} from './components/Header'
 import { Profile } from './components/profile/Profile';
 import { Messenger } from './components/Messenger/Messenger';
 import { Chat } from './components/Messenger/Chat/Chat';
+import { Home } from './components/Home/Home';
+import { useEffect } from 'react';
 
 export const App = () => {
   const isLog = sessionStorage.getItem('isLoggin')
   return (
     <div className="App">
-        {isLog === 'true' && <Header className={'element'} />}
+        <Header />
         <Routes>
             <Route path={'/login'} element={<Login className={'element'} />} />
+            <Route path={'/'} element={<Home />} />
             <Route path={'/registration'} element={<Registration className={'element'} />} />
             <Route path={'/profile/:login'} element={<Profile className={'element'} />} />
             <Route path={'/messenger'} element={<Messenger className={'element'} />} />

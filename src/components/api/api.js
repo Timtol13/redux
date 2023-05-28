@@ -28,7 +28,6 @@ export const authAPI = {
     login(login, password){
         return instance.get(`/login/${login}/${password}`).then((res) => {
             sessionStorage.setItem('isLoggin', 'true')
-            console.log(res)
             sessionStorage.setItem('user', JSON.stringify({'login': res.data}))
             window.location.replace(`/profile/${login}`)
         })
@@ -43,5 +42,14 @@ export const MessagesAPI = {
     },
     getMessages(userFrom, userTo){
         return instance.get(`/getMessages/${userFrom}/${userTo}`)
+    }
+}
+
+export const PostsAPI = {
+    getPosts(){
+        return instance.get('/getPosts')
+    },
+    createPost({ login, name, surname, description, photo }){
+        return instance.post('/createPost', { login, name, surname, description, photo })
     }
 }

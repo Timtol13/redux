@@ -10,13 +10,12 @@ export const Chat = () => {
     const [messages, setMessages] = useState([])
     const [value, setValue] = useState('')
     const socket = io('http://localhost:5500');
+    const messagesEndRef = useRef(null);
+    var arr = []
     const fetchMessages = () => {
-        let arr = []
         MessagesAPI.getMessages(user.login, login).then(e => {e.data.map(d => {arr.push(d)}); })
         MessagesAPI.getMessages(login, user.login).then(e => {e.data.map(d => {arr.push(d)});
-            console.log(arr); 
-            console.log(arr.sort((el, el1) => el.date - el1.date)); 
-            setMessages(arr.sort((el, el1) => el.date - el1.date)) })
+            setMessages(arr); arr = [];})
     }
     useEffect(() => {
         socket.on('connect', () => {
@@ -26,8 +25,11 @@ export const Chat = () => {
             console.log('Message received: ', data)
         });
         fetchMessages()
+    }, [])
+    useEffect(() => {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
     }
-    , [])
+    , [messages])
     const sendMessage = () => {
         let message = {
             userFrom: user.login,
@@ -36,23 +38,26 @@ export const Chat = () => {
         }
         socket.emit('message', message)
         console.log("message " + value + " is sending")
-        fetchMessages()
         setValue('')
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
     }
     return (
         <div className={'container'}>
             <h3>{login}</h3>
             <div className='content'>
                 <div className={'messages'}>
-                    {messages.map(mes => {
-                        return <div key={mes.id}>
+                    {messages.sort((el, el1) => Date.parse(el.date) - Date.parse(el1.date)).map(mes => {
+                        return (
+                            <div key={mes.id}>
                                 {
-                                    <div className="message">
-                                        {mes.userFrom}<br /> {mes.message}
+                                    <div className={`message ${mes.userFrom === user.login? 'usFr' : ''}`}>
+                                        <h3 className='sender'>{mes.userFrom}</h3><br />
+                                        <h4 className='senderText'>{mes.message}</h4>
                                     </div>
                                 }
-                            </div>
+                            </div>)
                     })}
+                    <div ref={messagesEndRef}></div>
                 </div>
                 <div className={'send_form'}>
                     <input type='text' value={value} onChange={e => setValue(e.target.value)} />
