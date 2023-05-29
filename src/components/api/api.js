@@ -29,11 +29,18 @@ export const authAPI = {
         return instance.get(`/login/${login}/${password}`).then((res) => {
             sessionStorage.setItem('isLoggin', 'true')
             sessionStorage.setItem('user', JSON.stringify({'login': res.data}))
+            sessionStorage.setItem('likes', JSON.stringify([]))
             window.location.replace(`/profile/${login}`)
         })
     },
     sendPhoto(login, files){
         return instancePhoto.post('/sendPhoto', login, files)
+    },
+    getPhoto(login){
+        return instance.get(`/getPhoto/${login}`)
+    },
+    getUserPhotoes(login){
+        return instance.get(`/getPhotoes/${login}`)
     }
 }
 export const MessagesAPI = {

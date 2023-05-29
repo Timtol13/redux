@@ -48,19 +48,27 @@ export const Home = () => {
     <div className={'homeMainDiv'}>
       <button className={'createPost'} onClick={handleOpen}>Создать запись</button>
         <div className={'newsline'}>
-          {posts.slice().reverse().map(el => {
+          {posts? posts.slice().reverse().map(el => {
             return (
               <div className={'post'}>
                 <h2>{el.name} {el.surname}</h2>
                 <p>{el.description}</p>
                 <img src={`http://localhost:7653/images/posts/${el.photo}`} alt={''}/>
                 <button onClick={() => {
+                    let newLike = []
+                    likedPosts?.map(els => {
+                      if(els !== el.ID){
+                        newLike.push(els)
+                      }
+                    })
                     setLike(!like)
-                    like? PostsAPI.unlike(el.ID) : PostsAPI.like(el.ID)
-                    like? setLikedPosts(n => [...n, el.ID]) : setLikedPosts(likedPosts.filter(item => item.ID !== el.ID))
+                    likedPosts?.includes(el.ID)? PostsAPI.unlike(el.ID) : PostsAPI.like(el.ID)
+                    likedPosts?.includes(el.ID)
+                      ? setLikedPosts(newLike)
+                      : setLikedPosts(n => [...n, el.ID]);
                     sessionStorage.setItem('likes', JSON.stringify(likedPosts))
                   }}>
-                  <svg fill={like? '#ff0000': '#000000'} height="40px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" link="http://www.w3.org/1999/xlink" 
+                  <svg fill={likedPosts?.includes(el.ID) ? '#ff0000': '#000000'} height="40px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" link="http://www.w3.org/1999/xlink" 
                     viewBox="0 0 471.701 471.701" >
                   <g>
                     <path d="M433.601,67.001c-24.7-24.7-57.4-38.2-92.3-38.2s-67.7,13.6-92.4,38.3l-12.9,12.9l-13.1-13.1
@@ -75,7 +83,7 @@ export const Home = () => {
                 </button>
               </div>
             )
-          })}
+          }) : ''}
         </div>
         <Modal
           open={open}
