@@ -50,6 +50,12 @@ export const PostsAPI = {
         return instance.get('/getPosts')
     },
     createPost({ login, name, surname, description, photo }){
-        return instance.post('/createPost', { login, name, surname, description, photo })
+        return instancePhoto.post('/createPost', { login, name, surname, description, photo })
+    },
+    like(id){
+        return instance.put('/like', {id})
+    },
+    unlike(id){
+        return instance.put('/unlike', {id})
     }
 }

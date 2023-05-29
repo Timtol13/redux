@@ -53,6 +53,7 @@ export const Chat = () => {
                                     <div className={`message ${mes.userFrom === user.login? 'usFr' : ''}`}>
                                         <h3 className='sender'>{mes.userFrom}</h3><br />
                                         <h4 className='senderText'>{mes.message}</h4>
+                                        <h6 className='senderDate'>{new Date(mes.date).getHours()}:{new Date(mes.date).getMinutes()}</h6>
                                     </div>
                                 }
                             </div>)
