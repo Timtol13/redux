@@ -11,7 +11,7 @@ export const Profile = () => {
     const [file, setFile] = useState(null);
     useEffect(()=>{
         authAPI.getUser(login).then(e => {setUser(e.data)})
-        authAPI.getPhoto(login).then(e => {setPhoto(`http://localhost:7653/images/${login}/${e.data}`)})
+        authAPI.getPhoto(login).then(e => {setPhoto(`http://localhost:7653/images/${login}/${e.data.filename}`)})
     }, [])
     const uploadHandler = (event) => {
         setFile(event.target.files[0]);
@@ -19,6 +19,7 @@ export const Profile = () => {
         console.log(event.target.files[0])
         authAPI.sendPhoto({'login': user.login, 'files': event.target.files[0]})
     };
+    console.log(photo)
     return (
         <div className={'profile_container'}>
             <div className={'profile_photo'}>

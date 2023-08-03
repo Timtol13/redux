@@ -1,12 +1,21 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { Link, BrowserRouter, useNavigate} from 'react-router-dom'
 import styles from './Header.modul.scss'
+import { StatusAPI } from './api/api'
+import {io} from 'socket.io-client';
 
 export const Header = () => {
     const nav = useNavigate()
     const logg = sessionStorage.getItem('isLoggin')
     const us = sessionStorage.getItem('user')
     const me = us? JSON.parse(sessionStorage.getItem('user')).login: ''
+    const socket = io('http://localhost:5500');
+    window.addEventListener('beforeunload', function (e) {
+        StatusAPI.setOffline(me.login)
+      }, false);
+      window.addEventListener('load', function(e){
+        StatusAPI.setOnline(me.login)
+      })
     const logoutHandler = () => {
         sessionStorage.setItem('isLoggin', 'false')
         sessionStorage.setItem('user', JSON.stringify({}))
@@ -24,6 +33,18 @@ export const Header = () => {
     const photoHandler = () => {
         window.location.replace('/photo')
     }
+    if(!us){
+        logoutHandler()
+    }
+    useEffect(() => {
+        socket.on('connect', (room) => {
+            console.log('Connected to server');
+            socket.emit('connectToChat', me.login)
+          });
+        socket.on('newMessage', (data) => {
+            console.log('Новое сообщение:', data);
+          });
+    }, [])
     return (
         <>
             {logg === 'true' && 

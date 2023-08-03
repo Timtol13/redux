@@ -10,13 +10,14 @@ export const Messenger = () => {
     MessagesAPI.getUsers().then(response => { setChats(response.data) })
     setUser(JSON.parse(sessionStorage.getItem('user')).login)
   }, [])
+  
   return (
     <div className={'allMessages'}>
       {chats.map(mes => {
         if (mes.login !== user.login){
           return (
             <a href={`/chat/${mes.login}`} className={'message'} key={mes.user}>
-              <h3>{mes.Username} {mes.Surname}</h3>
+              <h3>{mes.Username} {mes.Surname} <img src={mes.status === 'online'? '/online.png' : '/offline.png'} width={10}/></h3>
             </a>
             )}
       })}

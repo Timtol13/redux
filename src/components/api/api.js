@@ -66,3 +66,11 @@ export const PostsAPI = {
         return instance.put('/unlike', {id})
     }
 }
+export const StatusAPI = {
+    setOnline(login){
+        return instance.post(`/setOnline/${login}`)
+    },
+    setOffline(login){
+        return instance.post(`/setOffline/${login}`)
+    }
+}
