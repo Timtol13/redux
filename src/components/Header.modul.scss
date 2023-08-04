@@ -94,12 +94,14 @@ nav{
     min-width: 190px;;
     padding: 0;
     padding-left: 10px;
-    top: 0;
-    left: 0;
+    text-decoration: none;
+    color: #000; 
+    top: 20px;
+    left: 20px;
     border: 1px solid #aaa;
     background-color: #eee;
     border-radius: 20px;
-    animation: notif 4s infinite ease-in-out;
+    animation: notif 6s infinite ease-in-out;
     h2{
         margin-bottom: 0;
     }

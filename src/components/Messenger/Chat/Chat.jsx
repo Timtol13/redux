@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import './Chat.modul.scss';
 import { useParams } from 'react-router';
 import {io} from 'socket.io-client';
-import { MessagesAPI } from '../../api/api';
+import { MessagesAPI, authAPI } from '../../api/api';
 
 // export const fetchMessages = (userFrom, userTo, setMessages) => {
 //     Promise.all([
@@ -19,6 +19,7 @@ import { MessagesAPI } from '../../api/api';
 //   };
 
 export const Chat = () => {
+  const api = 'http://localhost:7653'
   const { login } = useParams();
   const user = JSON.parse(sessionStorage.getItem('user')).login;
   const [messages, setMessages] = useState([]);
@@ -26,6 +27,7 @@ export const Chat = () => {
   const socket = io('http://localhost:5500');
   const messagesEndRef = useRef(null);
   const room = 0
+  const [us, setUser] = useState({})
 
   const fetchMessages = () => {
     Promise.all([
@@ -41,6 +43,7 @@ export const Chat = () => {
       });
   };
     useEffect(() => {
+        authAPI.getUser(login, 'password').then(e => {setUser(e.data)})
         socket.on('connect', (room) => {
             console.log('Connected to server');
             socket.emit('connectToChat', user.login)
@@ -99,19 +102,24 @@ export const Chat = () => {
 
     }
   }
+  function upload(files, filename) {
+    socket.emit("upload", files[0], filename, user.login, login, (status) => {
+      console.log(status);
+    });
+  }
 
   return (
     <div className={'container'} onLoad={setFocus()}>
-      <h3>{login}</h3>
+      <h3>{us.Username} {us.Surname} <img src={us.status === 'online'? '/online.png' : '/offline.png'} width={10}/></h3>
       <div className='content'>
         <div className={'messages'}>
           {messages.sort((el, el1) => Date.parse(el.date) - Date.parse(el1.date)).map(mes => (
             <div key={mes.id}>
-              <div className={`message ${mes.userFrom === user.login ? 'usFr' : ''}`}>
-                <h3 className='sender'>{mes.userFrom}</h3><br />
-                <h4 className='senderText'>{mes.message}</h4>
-                <h6 className='senderDate'>{new Date(mes.date).getHours()}:{new Date(mes.date).getMinutes()}</h6>
-              </div>
+                <div className={`message ${mes.userFrom === user.login ? 'usFr' : ''}`}>
+                  <h3 className='sender'>{mes.userFrom}</h3><br />
+                  {mes.type === 'file'? <><img className='senderText' src={`${api}/images/messages/${mes.userFrom}/${mes.userTo}/${mes.message}`}/> <a className='download' href={`${api}/images/messages/${mes.userFrom}/${mes.userTo}/${mes.message}`}><img src={'/install.png'} width={20}/></a></> : <h4 className='senderText'>{mes.message}</h4>}
+                  <h6 className='senderDate'>{new Date(mes.date).getHours()}:{new Date(mes.date).getMinutes()}</h6>
+                </div>
             </div>
           ))}
           <div ref={messagesEndRef}></div>
@@ -128,6 +136,12 @@ export const Chat = () => {
               }
             }}
           />
+            <label class="input-file">
+                <input type="file" name="file" onChange={(e) => {
+                  upload(e.target.files, e.target.files[0].name)
+                }}/>		
+                <span><img src={'/file.png'} width={30} height={30}/></span>
+            </label>
           <button id={'btn'} onClick={sendMessage}>Отправить</button>
         </div>
       </div>
