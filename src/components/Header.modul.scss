@@ -86,3 +86,42 @@ nav{
     margin-right: 90px;
     width: 250px;
 }
+.notification{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    max-height: 200px;
+    min-width: 190px;;
+    padding: 0;
+    padding-left: 10px;
+    top: 0;
+    left: 0;
+    border: 1px solid #aaa;
+    background-color: #eee;
+    border-radius: 20px;
+    animation: notif 4s infinite ease-in-out;
+    h2{
+        margin-bottom: 0;
+    }
+    h3{
+        margin-top: 0;
+    }
+}
+
+@keyframes notif {
+    0%{
+        opacity: 0;
+    }
+    10%{
+        opacity: 1;
+    }
+    50%{
+        opacity: 1;
+    }
+    90%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+    }
+}

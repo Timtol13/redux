@@ -1,15 +1,14 @@
-import React, {useEffect} from 'react'
-import { Link, BrowserRouter, useNavigate} from 'react-router-dom'
+import React, {useEffect, useState} from 'react'
 import styles from './Header.modul.scss'
-import { StatusAPI } from './api/api'
+import { StatusAPI, authAPI } from './api/api'
 import {io} from 'socket.io-client';
 
 export const Header = () => {
-    const nav = useNavigate()
     const logg = sessionStorage.getItem('isLoggin')
     const us = sessionStorage.getItem('user')
     const me = us? JSON.parse(sessionStorage.getItem('user')).login: ''
     const socket = io('http://localhost:5500');
+    const [notification, setNotification] = useState()
     window.addEventListener('beforeunload', function (e) {
         StatusAPI.setOffline(me.login)
       }, false);
@@ -36,13 +35,27 @@ export const Header = () => {
     if(!us){
         logoutHandler()
     }
+    const [notifData, setNotifData] = useState({})
     useEffect(() => {
         socket.on('connect', (room) => {
             console.log('Connected to server');
             socket.emit('connectToChat', me.login)
           });
         socket.on('newMessage', (data) => {
-            console.log('Новое сообщение:', data);
+            authAPI.getUser(data.userFrom, 'null').then(e => {
+                setNotification({
+                    'login': data.userFrom,
+                    'name': e.data.Username,
+                    'surname': e.data.Surname,
+                    'message': data.message
+                })
+                console.log(notification) 
+            })
+            .then(() => {
+                setTimeout(() => {
+                    setNotification(null)
+                }, 4000)
+            })
           });
     }, [])
     return (
@@ -59,7 +72,7 @@ export const Header = () => {
                         </ul>
                     </nav>
                     <div className={'marg'}></div>
-                    
+                    {notification? <div className={'notification'}><h2>{notification.name} {notification.surname}</h2><h3>{notification.message}</h3></div>: ''}
                 </div>
             }
         </>
