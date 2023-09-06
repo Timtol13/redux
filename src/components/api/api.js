@@ -16,7 +16,7 @@ const instancePhoto = axios.create({
 export const authAPI = {
     registration(login, password, name, surname, description){
         return instance.post('/registration', login, password, name, surname, description).then((res) => {
-            this.getUser(login, password)
+            this.login(login, password)
         })
     },
     getUser(login, password){
@@ -33,19 +33,22 @@ export const authAPI = {
             window.location.replace(`/profile/${login}`)
         })
     },
-    sendPhoto(login, files){
-        return instancePhoto.post('/sendPhoto', login, files)
+    sendPhoto(login, status, files){
+        return instancePhoto.post('/sendPhoto', login, status, files)
     },
     getPhoto(login){
         return instance.get(`/getPhoto/${login}`)
     },
     getUserPhotoes(login){
-        return instance.get(`/getPhotoes/${login}`)
+        return instance.get(`/getPhotos/${login}`)
     }
 }
 export const MessagesAPI = {
     getUsers(){
         return instance.get('/getUsers')
+    },
+    getChats(user){
+        return instance.get(`/getChats/${user}`)
     },
     getMessages(userFrom, userTo){
         return instance.get(`/getMessages/${userFrom}/${userTo}`)
@@ -59,11 +62,11 @@ export const PostsAPI = {
     createPost({ login, name, surname, description, photo }){
         return instancePhoto.post('/createPost', { login, name, surname, description, photo })
     },
-    like(id){
-        return instance.put('/like', {id})
+    like({id, login}){
+        return instance.put('/like', {id, login})
     },
-    unlike(id){
-        return instance.put('/unlike', {id})
+    unlike({id, login}){
+        return instance.put('/unlike', {id, login})
     }
 }
 export const StatusAPI = {
@@ -72,5 +75,26 @@ export const StatusAPI = {
     },
     setOffline(login){
         return instance.post(`/setOffline/${login}`)
+    }
+}
+export const PhotoAPI = {
+    like({login, filename, likeTo}){
+        return instance.put('/likePhoto', {login, filename, likeTo})
+    },
+    unlike({id, login, likeTo}){
+        return instance.put('/dislikePhoto', {id, login, likeTo})
+    }
+}
+export const CommentsAPI = {
+    sendCommentToPhoto(data){
+        return instance.put('/commentPhoto', data)
+    }
+}
+export const ChangeProfileAPI = {
+    putName({name, surname, login}){
+        return instance.put(`/changeName/${login}`, {name, surname})
+    },
+    putDescription({description, login}){
+        return instance.put(`/changeDescription/${login}`, {description})
     }
 }

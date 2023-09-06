@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import styles from './Header.modul.scss'
 import { StatusAPI, authAPI } from './api/api'
 import {io} from 'socket.io-client';
+import { useParams } from 'react-router-dom';
 
 export const Header = () => {
     const logg = sessionStorage.getItem('isLoggin')
@@ -30,7 +31,10 @@ export const Header = () => {
         window.location.replace('/')
     }
     const photoHandler = () => {
-        window.location.replace('/photo')
+        window.location.replace(`/photos/${me.login}`)
+    }
+    const peoplesHandler = () => {
+        window.location.replace(`/peoples`)
     }
     if(!us){
         logoutHandler()
@@ -45,8 +49,8 @@ export const Header = () => {
             authAPI.getUser(data.userFrom, 'null').then(e => {
                 setNotification({
                     'login': data.userFrom,
-                    'name': e.data.Username,
-                    'surname': e.data.Surname,
+                    'name': e.data[0].username,
+                    'surname': e.data[0].surname,
                     'message': data.message
                 })
                 console.log(notification) 
@@ -66,6 +70,7 @@ export const Header = () => {
                         <ul>
                             <li><button onClick={profileHandler}><img src={'/profile.png'} alt={'Oops'} width={20} height={20} />Профиль</button></li>
                             <li><button onClick={newsHandler}><img src={'/news.png'} alt={'Oops'} width={20} height={20} />Новости</button></li>
+                            <li><button onClick={peoplesHandler}><img src={'/peoples.png'} alt={'Oops'} width={20} height={20} />Люди</button></li>
                             <li><button onClick={messengerHandler}> <img src={'/Message.png'} alt={'Oops'} width={20} height={20} />Сообщения</button></li>
                             <li><button onClick={photoHandler}><img src={'/Photo.png'} alt={'Oops'} height={20} />Фото</button></li>
                             <li><button className={'Exit'} onClick={logoutHandler}><img src={'/cross.png'} alt={'Oops'}  width={20} height={20}/>Выйти из уч. записи</button></li>

@@ -10,14 +10,16 @@ export const Home = () => {
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const [posts, setPosts] = useState([])
-  const [like, setLike] = useState(false)
+  const [likes, setLikes] = useState(0);
   const [likedPosts, setLikedPosts] = useState([])
   const user = JSON.parse(sessionStorage.getItem('user')).login
   useEffect(() => {
     PostsAPI.getPosts().then(e => {setPosts(e.data)})
   }, [])
   useEffect(() => {
-    setLikedPosts(JSON.parse(sessionStorage.getItem('likes')))
+    posts?.map(el => {
+      if(el.like.includes(user.login)) setLikedPosts(prev => [...prev, el.id])
+    })
   }, [posts])
   const formik = useFormik(
     {
@@ -28,8 +30,8 @@ export const Home = () => {
       onSubmit: async values => {
         const formData = new FormData();
         formData.append('login', user.login);
-        formData.append('name', user.Username);
-        formData.append('surname', user.Surname);
+        formData.append('name', user.username);
+        formData.append('surname', user.surname);
         formData.append('description', values.description);
         formData.append('photo', values.photo);
 
@@ -48,27 +50,22 @@ export const Home = () => {
     <div className={'homeMainDiv'}>
       <button className={'createPost'} onClick={handleOpen}>Создать запись</button>
         <div className={'newsline'}>
-          {posts? posts.slice().reverse().map(el => {
+          {posts? posts.sort((a, b) => a.id - b.id).map(el => {
+            let likee = el.like.length
             return (
               <div className={'post'}>
                 <h2>{el.name} {el.surname}</h2>
                 <p>{el.description}</p>
                 <img src={`http://localhost:7653/images/posts/${el.photo}`} alt={''}/>
                 <button onClick={() => {
-                    let newLike = []
-                    likedPosts?.map(els => {
-                      if(els !== el.ID){
-                        newLike.push(els)
-                      }
+                    el.like?.includes(user.login)? PostsAPI.unlike({'id': el.id, 'login': user.login}).then(() => {
+                      PostsAPI.getPosts().then(e => {setPosts(e.data)})
+                    }) : PostsAPI.like({'id': el.id, 'login': user.login}).then(() => {
+                      PostsAPI.getPosts().then(e => {setPosts(e.data)})
                     })
-                    setLike(!like)
-                    likedPosts?.includes(el.ID)? PostsAPI.unlike(el.ID) : PostsAPI.like(el.ID)
-                    likedPosts?.includes(el.ID)
-                      ? setLikedPosts(newLike)
-                      : setLikedPosts(n => [...n, el.ID]);
-                    sessionStorage.setItem('likes', JSON.stringify(likedPosts))
+                    
                   }}>
-                  <svg fill={likedPosts?.includes(el.ID) ? '#ff0000': '#000000'} height="40px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" link="http://www.w3.org/1999/xlink" 
+                  <svg fill={el.like?.includes(user.login) ? '#ff0000': '#000000'} height="40px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" link="http://www.w3.org/1999/xlink" 
                     viewBox="0 0 471.701 471.701" >
                   <g>
                     <path d="M433.601,67.001c-24.7-24.7-57.4-38.2-92.3-38.2s-67.7,13.6-92.4,38.3l-12.9,12.9l-13.1-13.1
@@ -80,6 +77,7 @@ export const Home = () => {
                       C444.801,187.101,434.001,213.101,414.401,232.701z"/>
                   </g>
                   </svg>
+                  <h3>{el.like.length}</h3>
                 </button>
               </div>
             )

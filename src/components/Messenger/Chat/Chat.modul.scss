@@ -40,10 +40,9 @@
             .message{
                 display: flex;
                 flex-direction: column;
-                min-width: 40px;
-                max-width: 240px;
+                min-width: 100px;
+                max-width: 320px;
                 min-height: 20px;
-                max-height: 230px;
                 background-color: #ccc;
                 padding: 5px;
                 border-radius: 10px;
@@ -75,7 +74,7 @@
                 .download{
                     width: 40px;
                     height: 40px;
-                    margin-left: 85%;
+                    margin-left: 75%;
                     margin-top: -9%;
                     z-index: 10;
                 }

@@ -15,8 +15,8 @@ export const Registration = () => {
             'description': '',
         },
         onSubmit: (values) => {
-            authAPI.registration(values)
-            window.location.replace(`/profile/${values.login}`)
+            authAPI.registration(values).catch(() => {console.log('error')}).then(() => {window.location.replace(`/login`)})
+            
         }
     })
     return (

@@ -43,7 +43,7 @@ export const Chat = () => {
       });
   };
     useEffect(() => {
-        authAPI.getUser(login, 'password').then(e => {setUser(e.data)})
+        authAPI.getUser(login, 'password').then(e => {setUser(e.data[0])})
         socket.on('connect', (room) => {
             console.log('Connected to server');
             socket.emit('connectToChat', user.login)
@@ -66,10 +66,7 @@ export const Chat = () => {
           socket.on('newMessage', (data) => {
             console.log('Новое сообщение:', data);
             fetchMessages();
-          });
-        //   return () => {
-        //     socket.disconnect();
-        //   };
+          })
         fetchMessages();
     }, [])
 
@@ -90,7 +87,6 @@ export const Chat = () => {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
       fetchMessages();
     } else {
-      // Ничего не делаем, если значение пустое или состоит только из пробелов
     }
   };
   function setFocus()
@@ -110,14 +106,14 @@ export const Chat = () => {
 
   return (
     <div className={'container'} onLoad={setFocus()}>
-      <h3>{us.Username} {us.Surname} <img src={us.status === 'online'? '/online.png' : '/offline.png'} width={10}/></h3>
+      <h3>{us.username} {us.surname} <img src={us.status === 'online'? '/online.png' : '/offline.png'} width={10}/></h3>
       <div className='content'>
         <div className={'messages'}>
           {messages.sort((el, el1) => Date.parse(el.date) - Date.parse(el1.date)).map(mes => (
             <div key={mes.id}>
-                <div className={`message ${mes.userFrom === user.login ? 'usFr' : ''}`}>
-                  <h3 className='sender'>{mes.userFrom}</h3><br />
-                  {mes.type === 'file'? <><img className='senderText' src={`${api}/images/messages/${mes.userFrom}/${mes.userTo}/${mes.message}`}/> <a className='download' href={`${api}/images/messages/${mes.userFrom}/${mes.userTo}/${mes.message}`}><img src={'/install.png'} width={20}/></a></> : <h4 className='senderText'>{mes.message}</h4>}
+                <div className={`message ${mes.userfrom === user.login ? 'usFr' : ''}`}>
+                  <h3 className='sender'>{mes.userfrom}</h3><br />
+                  {mes.type === 'file'? <><img className='senderText' alt={'Скачать'} src={`${api}/images/messages/${mes.userfrom}/${mes.userto}/${mes.message}`}/> <a className='download' href={`${api}/images/messages/${mes.userFrom}/${mes.userTo}/${mes.message}`}><img src={'/install.png'} width={20}/></a></> : <h4 className='senderText'>{mes.message}</h4>}
                   <h6 className='senderDate'>{new Date(mes.date).getHours()}:{new Date(mes.date).getMinutes()}</h6>
                 </div>
             </div>

@@ -8,6 +8,7 @@ import { Messenger } from './components/Messenger/Messenger'
 import { Chat } from './components/Messenger/Chat/Chat'
 import { Home } from './components/Home/Home'
 import { Photo } from './components/Photo/Photo'
+import { Peoples } from './components/Peoples/Peoples'
 
 export const App = () => {
   const isLog = sessionStorage.getItem('isLoggin')
@@ -20,8 +21,9 @@ export const App = () => {
             <Route path={'/registration'} element={<Registration />} />
             <Route path={'/profile/:login'} element={<Profile className={'element'} />} />
             <Route path={'/messenger'} element={<Messenger className={'element'} />} />
+            <Route path={'/peoples'} element={<Peoples className={'element'} />} />
             <Route path={'/chat/:login'} element={<Chat className={'element'} />} />
-            <Route path={'/photo'} element={<Photo className={'element'} />} />
+            <Route path={'/photos/:login'} element={<Photo className={'element'} />} />
         </Routes>
     </div>
   )
