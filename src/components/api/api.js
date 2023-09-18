@@ -1,4 +1,9 @@
 import axios from 'axios'
+//import OpenAI from 'openai'
+
+// const gptApi = new OpenAI({ 
+//     apiKey: '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' 
+// })
 
 const instance = axios.create({
     baseURL: 'http://localhost:7653',
@@ -15,9 +20,7 @@ const instancePhoto = axios.create({
 
 export const authAPI = {
     registration(login, password, name, surname, description){
-        return instance.post('/registration', login, password, name, surname, description).then((res) => {
-            this.login(login, password)
-        })
+        return instance.post('/registration', login, password, name, surname, description)
     },
     getUser(login, password){
         return instance.get(`/user/${login}`)
@@ -26,12 +29,7 @@ export const authAPI = {
         return instance.get('/users')
     },
     login(login, password){
-        return instance.get(`/login/${login}/${password}`).then((res) => {
-            sessionStorage.setItem('isLoggin', 'true')
-            sessionStorage.setItem('user', JSON.stringify({'login': res.data}))
-            sessionStorage.setItem('likes', JSON.stringify([]))
-            window.location.replace(`/profile/${login}`)
-        })
+        return instance.get(`/login/${login}/${password}`)
     },
     sendPhoto(login, status, files){
         return instancePhoto.post('/sendPhoto', login, status, files)
@@ -96,5 +94,15 @@ export const ChangeProfileAPI = {
     },
     putDescription({description, login}){
         return instance.put(`/changeDescription/${login}`, {description})
+    }
+}
+
+export const gptAPI = {
+    async requestToChat(message){
+        // const response = await gptApi.chat.completions.create({
+        //     messages: [{ role: 'user', content: message }],
+        //     model: 'gpt-3.5-turbo',
+        //   });
+        // return response.choices()
     }
 }

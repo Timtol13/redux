@@ -16,8 +16,8 @@ export function authReducer(state, action){
                             'password': action.payload.password 
                         }
                         console.log("Is loggin")
-                        sessionStorage.setItem('user', JSON.stringify(user_login))
-                        sessionStorage.setItem('isLoggin', true)
+                        localStorage.setItem('user', JSON.stringify(user_login))
+                        localStorage.setItem('isLoggin', true)
                         window.location.replace(`/profile/${user_login.login}`)
                     }
                 } else { console.log("Uncorrect login") }

@@ -1,20 +1,22 @@
 .miniature{
     margin: 0;
     padding: 0;
-    height: 60px;
-    width: 190px;
+    max-height: 60px;
+    max-width: 190px;
     display: flex;
+    flex-direction: row;
+    color: #000;
+    text-decoration: none;
     .miniature_profile_photo{
         margin: 0;
         padding: 0;
         z-index: 1;
         width: 60px;
         height: 60px;
-        border: 1px solid #000;
+        border: 1px solid #F52E5C;
         border-radius: 50%;
         background-color: transparent;
         margin-right: 10px;
-        box-shadow: 3px 3px 0 0 #aaa;
         .miniature_frame{
             display: flex;
             margin: 0;

@@ -3,6 +3,7 @@ import './Chat.modul.scss';
 import { useParams } from 'react-router';
 import {io} from 'socket.io-client';
 import { MessagesAPI, authAPI } from '../../api/api';
+import {Helmet} from "react-helmet";
 
 // export const fetchMessages = (userFrom, userTo, setMessages) => {
 //     Promise.all([
@@ -21,7 +22,7 @@ import { MessagesAPI, authAPI } from '../../api/api';
 export const Chat = () => {
   const api = 'http://localhost:7653'
   const { login } = useParams();
-  const user = JSON.parse(sessionStorage.getItem('user')).login;
+  const user = JSON.parse(localStorage.getItem('user')).login;
   const [messages, setMessages] = useState([]);
   const [value, setValue] = useState('');
   const socket = io('http://localhost:5500');
@@ -104,12 +105,17 @@ export const Chat = () => {
     });
   }
 
+  const userTitle = `${us?.username} ${us?.surname}`
+
   return (
     <div className={'container'} onLoad={setFocus()}>
-      <h3>{us.username} {us.surname} <img src={us.status === 'online'? '/online.png' : '/offline.png'} width={10}/></h3>
+      <Helmet>
+        <title>{userTitle}</title>
+      </Helmet>
+      <h3>{us?.username} {us?.surname} <img src={us?.status === 'online'? '/online.png' : '/offline.png'} width={10}/></h3>
       <div className='content'>
         <div className={'messages'}>
-          {messages.sort((el, el1) => Date.parse(el.date) - Date.parse(el1.date)).map(mes => (
+          {messages?.sort((el, el1) => Date.parse(el.date) - Date.parse(el1.date))?.map(mes => (
             <div key={mes.id}>
                 <div className={`message ${mes.userfrom === user.login ? 'usFr' : ''}`}>
                   <h3 className='sender'>{mes.userfrom}</h3><br />

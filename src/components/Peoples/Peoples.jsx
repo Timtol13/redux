@@ -2,17 +2,21 @@ import React, {useState, useEffect} from 'react'
 import './Peoples.scss'
 import { MessagesAPI } from '../api/api'
 import { Miniature } from '../ProfileMiniature/Miniature'
+import { Helmet } from 'react-helmet'
 
 export const Peoples = () => {
   const [peoples, setPeoples] = useState([])
   const [user, setUser] = useState('')
   useEffect(() => {
     MessagesAPI.getUsers().then(e => {setPeoples(e.data)})
-    setUser(JSON.parse(sessionStorage.getItem('user')).login)
+    setUser(JSON.parse(localStorage.getItem('user')).login)
   }, [])
   console.log(peoples)
   return (
     <div className={'allPeoples'}>
+      <Helmet>
+          <title>Люди</title>
+      </Helmet>
       {peoples.map(people => {
         if (people.login !== user.login){
           return (

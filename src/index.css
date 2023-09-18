@@ -1,11 +1,11 @@
 html{
-  background-color: #fff;
+  background-color: #F0F2F5;
   /*filter: invert(1);*/
 }
 
 body {
   margin: 0;
-  font-family: 'Rubik', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -11,7 +11,7 @@ export const  Miniature = (props) => {
         authAPI.getPhoto(login).then(e => {setPhoto(`http://localhost:7653/images/${login}/${e.data[0].filename}`)})
     }, [])
   return (
-    <div className={'miniature'}>
+    <a className={'miniature'} href={`/profile/${login}`}>
         <div className={'miniature_profile_photo'}>
             <div className={'miniature_frame'}>
                 <img src={photo} className='miniature_img'  alt=''/>
@@ -21,6 +21,6 @@ export const  Miniature = (props) => {
             <h5>{user?.username} {user?.surname}</h5>
             <h6> {user?.status} </h6>
         </div>
-    </div>
+    </a>
   )
 }

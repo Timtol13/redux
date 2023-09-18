@@ -6,6 +6,7 @@ import { Miniature } from '../ProfileMiniature/Miniature';
 import { useParams } from 'react-router';
 import { PhotoAPI } from '../api/api';
 import StackGrid, { transitions } from "react-stack-grid";
+import { Helmet } from 'react-helmet';
 
 const style = {
     position: 'absolute',
@@ -37,7 +38,7 @@ export const Photo = () => {
     const {login} = useParams()
     const [userPhotoes, setUserPhotoes] = useState([])
     const [filename, setFilename] = useState([])
-    const user = JSON.parse(sessionStorage.getItem('user'))?.login
+    const user = JSON.parse(localStorage.getItem('user'))?.login
     useEffect(() => {
         authAPI.getUserPhotoes(login).then((e) => {
             setUserPhotoes(e.data)
@@ -110,6 +111,9 @@ export const Photo = () => {
     //266 - 
   return (
     <div  className={'photoMainDiv'}>
+        <Helmet>
+          <title>Фото</title>
+      </Helmet>
        <StackGrid
             columnWidth={150}
             className={'stackLayout'}

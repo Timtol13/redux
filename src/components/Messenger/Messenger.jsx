@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './Messenger.modul.scss'
 import { MessagesAPI, authAPI } from '../api/api'
+import {Helmet} from "react-helmet";
 
 export const Messenger = () => {
   const [chats, setChats] = useState([])
@@ -8,7 +9,7 @@ export const Messenger = () => {
   const [users, setUsers] = useState([])
 
   useEffect(() => {
-    setUser(JSON.parse(sessionStorage.getItem('user')).login)
+    setUser(JSON.parse(localStorage.getItem('user')).login)
   }, [])
   useEffect(() => {
     MessagesAPI.getChats(user.login).then(response => { setUsers(response.data) })
@@ -23,10 +24,13 @@ export const Messenger = () => {
   console.log(chats)
   return (
     <div className={'allMessages'}>
+      <Helmet>
+          <title>Сообщения</title>
+      </Helmet>
       {chats.map(mes => {
           return (
-            <a href={`/chat/${mes.login}`} className={'message'} key={mes.user}>
-              <h3>{mes.username} {mes.surname} <img src={mes.status === 'online'? '/online.png' : '/offline.png'} width={10}/></h3>
+            <a href={`/chat/${mes?.login}`} className={'message'} key={mes?.user}>
+              <h3>{mes?.username} {mes?.surname} <img src={mes?.status === 'online'? '/online.png' : '/offline.png'} width={10}/></h3>
             </a>
             )}
       )}

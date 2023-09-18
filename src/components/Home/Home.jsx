@@ -2,17 +2,17 @@ import React, { useEffect, useState } from 'react'
 import './Home.scss'
 import { Modal, Box } from '@mui/material'
 import { useFormik } from 'formik'
-import { PostsAPI } from '../api/api'
+import { PostsAPI, authAPI } from '../api/api'
 import axios from 'axios'
+import {Helmet} from "react-helmet";
 
 export const Home = () => {
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const [posts, setPosts] = useState([])
-  const [likes, setLikes] = useState(0);
   const [likedPosts, setLikedPosts] = useState([])
-  const user = JSON.parse(sessionStorage.getItem('user')).login
+  const user = JSON.parse(localStorage.getItem('user')).login
   useEffect(() => {
     PostsAPI.getPosts().then(e => {setPosts(e.data)})
   }, [])
@@ -48,10 +48,17 @@ export const Home = () => {
   )
   return (
     <div className={'homeMainDiv'}>
-      <button className={'createPost'} onClick={handleOpen}>Создать запись</button>
+      <Helmet>
+          <title>Новости</title>
+      </Helmet>
         <div className={'newsline'}>
+        <button className={'createPost'} onClick={handleOpen}>Создать запись</button>
           {posts? posts.sort((a, b) => a.id - b.id).map(el => {
-            let likee = el.like.length
+            authAPI.getUser(el.login).then((e) => {
+              // setName(e.data[0].username)
+              // setSurname(e.data[0].surname)
+            })
+            console.log(el.photo)
             return (
               <div className={'post'}>
                 <h2>{el.name} {el.surname}</h2>
