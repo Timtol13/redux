@@ -5,6 +5,7 @@ import { useFormik } from 'formik'
 import { PostsAPI, authAPI } from '../api/api'
 import axios from 'axios'
 import {Helmet} from "react-helmet";
+import { io } from 'socket.io-client'
 
 export const Home = () => {
   const [open, setOpen] = useState(false)
@@ -13,9 +14,22 @@ export const Home = () => {
   const [posts, setPosts] = useState([])
   const [likedPosts, setLikedPosts] = useState([])
   const user = JSON.parse(localStorage.getItem('user')).login
+  const socket = io('http://localhost:5500');
+
   useEffect(() => {
     PostsAPI.getPosts().then(e => {setPosts(e.data)})
+    socket.on('newLike', (data) => {
+      console.log(data)
+      PostsAPI.getPosts().then(e => {setPosts(e.data)})
+    })
   }, [])
+
+  const like = (id, login) => {
+    socket.emit('likePost', {'id': id, 'login': login})
+  }
+  const dislike = (id, login) => {
+    socket.emit('dislikePost', {'id': id, 'login': login})
+  }
   useEffect(() => {
     posts?.map(el => {
       if(el.like.includes(user.login)) setLikedPosts(prev => [...prev, el.id])
@@ -46,6 +60,7 @@ export const Home = () => {
       }
     }
   )
+
   return (
     <div className={'homeMainDiv'}>
       <Helmet>
@@ -53,7 +68,7 @@ export const Home = () => {
       </Helmet>
         <div className={'newsline'}>
         <button className={'createPost'} onClick={handleOpen}>Создать запись</button>
-          {posts? posts.sort((a, b) => a.id - b.id).map(el => {
+          {posts? posts?.sort((a, b) => a.id - b.id).map(el => {
             authAPI.getUser(el.login).then((e) => {
               // setName(e.data[0].username)
               // setSurname(e.data[0].surname)
@@ -65,12 +80,7 @@ export const Home = () => {
                 <p>{el.description}</p>
                 <img src={`http://localhost:7653/images/posts/${el.photo}`} alt={''}/>
                 <button onClick={() => {
-                    el.like?.includes(user.login)? PostsAPI.unlike({'id': el.id, 'login': user.login}).then(() => {
-                      PostsAPI.getPosts().then(e => {setPosts(e.data)})
-                    }) : PostsAPI.like({'id': el.id, 'login': user.login}).then(() => {
-                      PostsAPI.getPosts().then(e => {setPosts(e.data)})
-                    })
-                    
+                    el.like?.includes(user.login)? dislike(el.id, user.login) : like(el.id, user.login)
                   }}>
                   <svg fill={el.like?.includes(user.login) ? '#ff0000': '#000000'} height="40px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" link="http://www.w3.org/1999/xlink" 
                     viewBox="0 0 471.701 471.701" >

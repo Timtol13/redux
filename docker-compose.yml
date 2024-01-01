@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  redux:
+    build: .
+    container_name: "redux"
+    hostname: "redux"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/redux
+    environment:
+      - NODE_ENV=development

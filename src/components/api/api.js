@@ -60,12 +60,12 @@ export const PostsAPI = {
     createPost({ login, name, surname, description, photo }){
         return instancePhoto.post('/createPost', { login, name, surname, description, photo })
     },
-    like({id, login}){
-        return instance.put('/like', {id, login})
-    },
-    unlike({id, login}){
-        return instance.put('/unlike', {id, login})
-    }
+    // like({id, login}){
+    //     return instance.put('/like', {id, login})
+    // },
+    // unlike({id, login}){
+    //     return instance.put('/unlike', {id, login})
+    // }
 }
 export const StatusAPI = {
     setOnline(login){
@@ -76,12 +76,12 @@ export const StatusAPI = {
     }
 }
 export const PhotoAPI = {
-    like({login, filename, likeTo}){
-        return instance.put('/likePhoto', {login, filename, likeTo})
-    },
-    unlike({id, login, likeTo}){
-        return instance.put('/dislikePhoto', {id, login, likeTo})
-    }
+    // like({login, filename, likeTo}){
+    //     return instance.put('/likePhoto', {login, filename, likeTo})
+    // },
+    // unlike({id, login, likeTo}){
+    //     return instance.put('/dislikePhoto', {id, login, likeTo})
+    // }
 }
 export const CommentsAPI = {
     sendCommentToPhoto(data){

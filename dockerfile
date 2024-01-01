@@ -1,7 +1,12 @@
-FROM node:17-alpine
+FROM node:18
+
 WORKDIR /redux
-COPY package.json .
-RUN npm install
+
+COPY package.json ./
+COPY package-lock.json ./
+
+RUN npm ci
+
 COPY . .
-EXPOSE 3000
+
 CMD ["npm", "start"]
