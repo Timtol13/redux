@@ -1,0 +1,43 @@
+.miniature{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    justify-content: left;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    color: #000;
+    text-decoration: none;
+    .miniature_profile_photo{
+        margin: 0;
+        padding: 0;
+        z-index: 1;
+        width: 60px;
+        height: 60px;
+        border: 1px solid #F52E5C;
+        border-radius: 50%;
+        background-color: transparent;
+        margin-right: 10px;
+        .miniature_frame{
+            display: flex;
+            margin: 0;
+            overflow: hidden;
+            height: 60px;
+            width: 60px;
+            border-radius: 50%;
+            .miniature_img{
+                width: 100%;
+            }
+        }
+    }
+    .div{
+        margin: 0;
+        margin-left: 10px;
+        margin-top: 8px;
+        padding: 0; 
+        gap: 5px;
+        h5, h6{
+            margin: 0;
+        }
+    }
+}
