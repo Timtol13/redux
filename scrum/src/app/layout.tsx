@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import styles from '@/styles/main.module.scss'
+import React from "react";
+import Loader from "@/widgets/Loader/Loader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,8 +18,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="ru">
+      <body className={`${inter.className} ${styles.app}`}>
+        <React.Suspense fallback={<Loader />}>
+          {children}
+        </React.Suspense>
+      </body>
     </html>
   );
 }
