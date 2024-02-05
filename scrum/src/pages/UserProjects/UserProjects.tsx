@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import { ProjectsAPI, UsersAPI } from "@/shared/api/api";
 import { Input, Modal, Select } from "antd";
 import { Option } from "antd/es/mentions";
-import { Loader } from "@/widgets/Loader/Loader";
+import Loader from "@/widgets/Loader/Loader";
 import { useFormik } from "formik";
 
 export default function UserProjects() {
