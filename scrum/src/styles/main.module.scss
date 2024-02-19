@@ -1,0 +1,48 @@
+.app{
+  background-image: url("../images/bg_res.jpeg");
+  background-size: cover;
+  background-position: center;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  input, textarea, .ant-select-selector, .ant-select .ant-select-outlined .ant-select-single .ant-select-show-arrow{
+    outline: #FF8C69 !important;
+    &:hover, &:focus{
+      border-color: #FF8C69 !important;
+      box-shadow: 0 0 2px #FF8C6910 !important;
+    }
+  }
+  :where(.css-dev-only-do-not-override-1qhpsh8).ant-select-outlined:not(.ant-select-disabled):not(.ant-select-customize-input):not(.ant-pagination-size-changer):hover .ant-select-selector{
+    outline: #FF8C69 !important;
+    &:hover, &:focus{
+      border-color: #FF8C69 !important;
+      box-shadow: 0 0 2px #FF8C6910 !important;
+    }
+  }
+  button[type="button"]{
+    background: #FF8C69 !important;
+    color: #fff !important;
+    &:hover{
+      border-color: #FF8C69 !important;
+      box-shadow: 0 0 2px #FF8C6910 !important;
+      background: #fff !important;
+      color: #FF8C69 !important;
+    }
+  }
+  .linkToInThreads{
+    padding: 15px;
+    background-color: #ffffff80;
+    border-radius: 100%;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    z-index: 7;
+    bottom: 10px;
+    right: 10px;
+  }
+}
+.container{
+  width: 1380px;
+}

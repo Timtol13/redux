@@ -1,0 +1,16 @@
+version: '3'
+services:
+  scrum:
+    build: ./scrum
+    ports:
+      - 8014:8014
+    volumes:
+      - .:/scrum
+    command: npm run dev
+  social:
+    build: ./socialVite
+    ports:
+      - 5173:5173
+    volumes:
+      - .:/social
+    command: yarn dev
