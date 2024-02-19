@@ -25,7 +25,7 @@ export default function UserProjects() {
         value: user.id,
         label: `${user.login}(${user.username} ${user.surname})`
       }));
-      
+      localStorage.setItem('username', username)
       setUsers(formattedData);
     });
 

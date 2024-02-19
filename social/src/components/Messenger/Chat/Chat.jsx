@@ -22,7 +22,7 @@ import { Miniature } from '../../ProfileMiniature/Miniature';
 
 export const Chat = () => {
   const API_URL = 'http://localhost:7653';
-  const SOCKET_URL = 'http://localhost:5500';
+  const SOCKET_URL = 'ws://localhost:7653';
 
   const { login } = useParams();
   const user = JSON.parse(localStorage.getItem('user')).login;
@@ -31,7 +31,7 @@ export const Chat = () => {
   const [value, setValue] = useState('');
   const [us, setUser] = useState({});
 
-  const socket = io(SOCKET_URL);
+  const [socket, setSocket] = useState(io(SOCKET_URL))
   const messagesEndRef = useRef(null);
 
   const fetchMessages = async () => {
@@ -50,52 +50,50 @@ export const Chat = () => {
 
   useEffect(() => {
     authAPI.getUser(login, 'password').then(e => setUser(e.data[0]));
+
+    socket.on('connect', () => {
+      console.log('Connected to server');
+      socket.emit(JSON.stringify({ type: 'connectToChat', login: user.login }));
+    });
+  
+    socket.on('newMessage', (event) => {
+      console.log('qwe');
+      fetchMessages()
+    });
+  
+    socket.on('error', (error) => {
+      console.log('Socket произошла ошибка:', error);
+    });
+  
+    socket.on('close', (event) => {
+      console.log('Socket закрыт:', event);
+    });
+  
     fetchMessages();
   }, []);
-
+  
   useEffect(() => {
-    messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+    }
   }, [messages]);
-
-  socket.on('connect', () => {
-    console.log('Connected to server');
-    socket.emit('connectToChat', user.login);
-  });
-
-  socket.on('message', (data) => {
-    console.log('Message received: ', data);
-    setMessages(prevMessages => [...prevMessages, data]);
-  });
-
-  socket.on('inChat', (data) => {
-    console.log('In chat message received: ', data);
-    setMessages(prevMessages => [...prevMessages, ...data]);
-  });
-
-  socket.on('error', (error) => {
-    console.error('WebSocket error:', error);
-  });
-
-  socket.on('newMessage', () => {
-    console.log('Новое сообщение получено');
-    fetchMessages();
-  });
-
+  
   const sendMessage = () => {
     if (value.trim() !== '') {
       const message = {
         userFrom: user.login,
         userTo: login,
         message: value,
+        socketId: socket.id
       };
-
-      socket.emit('message', message);
-      console.log(`Сообщение "${value}" отправлено`);
+      socket.emit('message', JSON.stringify({ type: 'message', content: message }));
       setValue('');
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
-      fetchMessages();
+    }
+    else {
+      console.error('WS has been closed')
     }
   };
+  
 
   const setFocus = () => {
     const textbox = document.getElementById("textbox");
@@ -140,7 +138,7 @@ export const Chat = () => {
               }
             }}
           />
-            <label class="input-file">
+            <label className="input-file">
                 <input type="file" name="file" onChange={(e) => {
                   upload(e.target.files, e.target.files[0].name)
                 }}/>		

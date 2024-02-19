@@ -16,6 +16,9 @@ export const ProjectsAPI = {
   },
   postProject({name, description, typeProject, usersProject, username, peoples_count}:any){
     return instance.post('create-project', {name, description, typeProject, usersProject, username, peoples_count})
+  },
+  updateUserList({id, users}:any){
+    return instance.post('update-users-list', { id, users })
   }
 }
 
@@ -31,6 +34,9 @@ export const UsersAPI = {
 export const tasksAPI = {
   getTasks(id:number){
     return instance.get(`get-tasks/${id}`)
+  },
+  createTask({name, description, executor_id, creator, project_id, status}:any){
+    return instance.post('create-task', {name, description, executor_id, creator, project_id, status})
   },
   setComplited(id:number){
     return instance.put(`set-complited/${id}`)

@@ -31,6 +31,17 @@
       color: #FF8C69 !important;
     }
   }
+  .linkToInThreads{
+    padding: 15px;
+    background-color: #ffffff80;
+    border-radius: 100%;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    z-index: 7;
+    bottom: 10px;
+    right: 10px;
+  }
 }
 .container{
   width: 1380px;

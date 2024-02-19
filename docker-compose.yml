@@ -1,13 +1,16 @@
 version: '3'
-
 services:
-  redux:
-    build: .
-    container_name: "redux"
-    hostname: "redux"
+  scrum:
+    build: ./scrum
     ports:
-      - "3000:3000"
+      - 8014:8014
     volumes:
-      - .:/redux
-    environment:
-      - NODE_ENV=development
+      - .:/scrum
+    command: npm run dev
+  social:
+    build: ./socialVite
+    ports:
+      - 5173:5173
+    volumes:
+      - .:/social
+    command: yarn dev

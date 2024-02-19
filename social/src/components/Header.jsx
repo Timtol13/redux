@@ -10,16 +10,15 @@ export const Header = () => {
     const logg = localStorage.getItem('isLoggin')
     const us = localStorage.getItem('user')
     const me = us? JSON.parse(localStorage.getItem('user')).login: ''
-    const socket = io('http://localhost:5500');
     const [notification, setNotification] = useState()
     const logoutHandler = () => {
         localStorage.setItem('isLoggin', 'false')
         localStorage.setItem('user', JSON.stringify({}))
     }
     useEffect(() => {
+        const socket = io('ws://localhost:7653');
+        // socket.emit('connectToChat', me?.login)
         socket.on('connect', (room) => {
-            console.log('Connected to server');
-            socket.emit('connectToChat', me?.login)
             socket.emit('setOnline', me?.login)
           });
         socket.on('newMessage', (data) => {
@@ -54,13 +53,17 @@ export const Header = () => {
                 }, 6000)
             })
           });
+          window.addEventListener('beforeunload', (e) => {
+            socket.emit('disconnectUser', {'login': me?.login})
+          }, false);
+          window.addEventListener('load', (e) => {
+            socket.emit('connectToChat', {'login': me?.login})
+          })
+        return () => {
+            socket.disconnect();
+        };
     }, [])
-    window.addEventListener('beforeunload', (e) => {
-        socket.emit('disconnectUser', {'login': me?.login})
-      }, false);
-      window.addEventListener('load', (e) => {
-        socket.emit('connectToChat', {'login': me?.login})
-      })
+    
     return (
         <>  
             {

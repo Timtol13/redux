@@ -4,34 +4,18 @@ import { ProjectsAPI, UsersAPI, tasksAPI } from '@/shared/api/api'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import styles from '@/styles/ProjectPage/ProjectPage.module.scss'
-import { Select, Layout, Modal, Tabs, TabsProps, ConfigProvider, Dropdown, Menu, MenuProps } from 'antd';
+import { Select, Layout, Modal, Tabs, TabsProps, ConfigProvider, Dropdown, Menu, MenuProps, Button, Input } from 'antd';
 import Sider from 'antd/es/layout/Sider'
 import TaskIcon from '@/images/tasks.png'
 import Image from 'next/image'
 import { handleDelete, handleSetComplited, handleSetInWork, handleSetPostponed, handleUpdateUser } from './functions'
+import Link from 'next/link'
+import { filterOption, filterOptionCreate, formikCreateTaskFunc } from '@/shared/functions'
+import { ProjectType, TaskType } from '@/shared/types'
 
-type ProjectType = {
-  id: number,
-  name: string,
-  type: string,
-  description: string,
-  peoples_count:number, 
-  creator:string,
-  users: any[]
-}
-
-type TaskType = {
-  id:number,
-	name:string,
-	description:string,
-	executor_id:number,
-	creator:number,
-	project_id:number,
-	status:string,
-}
 
 export default function ProjectPage() {
-  const { id } = useParams()
+  const { id } = useParams() as Record<string, string>;
   const [projectData, setProjectData] = useState<ProjectType>()
   const [tasks, setTasks] = useState<TaskType[]>() 
   const [users, setUsers] = useState<any>([]);
@@ -39,6 +23,7 @@ export default function ProjectPage() {
   const [openModal, setOpenModal] = useState(false)
   const [ updateUserModal, setUpdateUserModal ] = useState(false)
   const [selectedTaskHook, setSelectedTaskHook] = useState<number>()
+  const username = localStorage? localStorage.getItem('username'): ''
   let selectedTask = 0
   useEffect(() => {
     ProjectsAPI.getProject(id).then(e => {setProjectData(e.data)})
@@ -64,8 +49,12 @@ export default function ProjectPage() {
     setItemsHandle()
     window.location.reload()
   }
-  const dropDownItems:MenuProps =
-  <Menu>
+
+  const handleOkToAddUser = () => {
+    ProjectsAPI.updateUserList({id, users: usersProject})
+  }
+
+  const dropDownItems = <Menu>
     <Menu.Item key={'1'}>
       <button onClick={() => {handleSetComplited(selectedTask); updateTasks()}}>
         Выполнена
@@ -87,13 +76,33 @@ export default function ProjectPage() {
       </button>
     </Menu.Item>
     <Menu.Item key={'5'}>
-      <button onClick={() => {setUpdateUserModal(true); console.log(selectedTask)}}>
+      <button onClick={() => {setUpdateUserModal(true)}}>
         Сменить исполнител 
       </button>
     </Menu.Item>
   </Menu>
 
   const [items, setItems] = useState<TabsProps['items']>([])
+  const [selectedTab, setSelectedTab] = useState(0)
+
+  const [formikExecutor, setFormikExecutor] = useState(0)
+  const [formikStatus, setFormikStatus] = useState('')
+
+  const formikCreateTask = formikCreateTaskFunc({projectData, formikExecutor, formikStatus})
+
+  const onChangeTabs = (e:any) => {
+      setSelectedTab(e);
+      const newItems = items && items.map(item => {
+          if (item.key === '4') {
+              return {
+                  ...item,
+                  label: e === '4' ? <Button onClick={() => formikCreateTask.handleSubmit()}>Создать задачу</Button> : <h1>Создать задачу</h1>
+              };
+          }
+          return item;
+      });
+      setItems(newItems);
+  }
   const setItemsHandle = () => {
     setItems([
       {
@@ -199,15 +208,63 @@ export default function ProjectPage() {
         })}
       </div>,
       },
+      {
+        key: '4',
+        label: selectedTab == 3? <Button onClick={() => {}}>Создать задачу</Button> : <h1>Создать задачу</h1>,
+        children: 
+        <form className={styles.formAddTask}>
+          <ConfigProvider
+            theme={{
+              components:{
+                Select:{
+                  colorPrimaryHover: '#FF8C69',
+                  colorPrimaryActive: '#FF8C69',
+                  colorTextPlaceholder: '#FF8C6950',
+                  colorBorder: "#00000000"
+                },
+                Input: {
+                  colorTextPlaceholder: '#FF8C6950',
+                  colorBorder: "#00000000"
+                }
+              }
+            }}
+          >
+          <Input 
+            placeholder='Название' 
+            onChange={(e) => formikCreateTask.setFieldValue('name', e.target.value)}
+          />
+          <Input.TextArea 
+            placeholder='Описание' 
+            onChange={(e) => formikCreateTask.setFieldValue('description', e.target.value)}
+          />
+
+          <Select style={{ width: '100%' }} placeholder='Исполнитель' showSearch filterOption={filterOptionCreate} className={styles.fromChild} options={projectData?.users?.map(user => JSON.parse(user))}  onChange={selectedValues => {
+              setFormikExecutor(selectedValues)
+            }}/>
+          <Select style={{ width: '100%' }} placeholder='Статус задачи' className={styles.fromChild} options={[
+            {
+              value: 'inWork', 
+              label: 'В процессе'
+            },
+            {
+              value: 'postponed', 
+              label: 'Отложена'
+            },
+            {
+              value: 'complited', 
+              label: 'Выполнена'
+            }
+            ]}  onChange={selectedValues => {
+              setFormikStatus(selectedValues)
+            }}/>
+            </ConfigProvider>
+        </form>
+      }
     ])
   }
   useEffect(() => {
     setItemsHandle()
   }, [tasks])
-  
-
-  const filterOption = (input: string, option?: { label: string; value: string }) =>
-  (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
   const handleToggleOpenModal = () => setOpenModal(true);
   const handleToggleCloseModal = () => setOpenModal(false);
@@ -216,9 +273,11 @@ export default function ProjectPage() {
 
   const handleOkOnUpdateUser = () => {
     handleUpdateUser(selectedTaskHook, updateUser);
-    setUpdateUserModal(false)
+    setUpdateUserModal(false);
     updateTasks();
   }
+
+  const arrowBack = '<-'
 
   return (
     <div className='container' id='container'>
@@ -238,20 +297,21 @@ export default function ProjectPage() {
         <Layout className={styles.projectMain}>
           <Sider width={250} className={styles.siderContainer}>
             <ul className={styles.userList}>
-              <li><h1>{projectData?.name}</h1></li>
+              <li> <Link href={`/${username}`}>{arrowBack}</Link> <h1>{projectData?.name}</h1></li>
               <li>
                 <h1>Участники</h1>
                 <button onClick={() => handleToggleOpenModal()}>+</button>
               </li>
-              {projectData?.users.map(el => <li className={styles.element}>{JSON.parse(el).label}</li>)}
+              {projectData?.users.map(el => <li className={styles.element}>{JSON?.parse(el)?.label}</li>)}
             </ul>
           </Sider>
-          <Tabs items={items} style={{ width: '100%', color: '#fff' }}   className={styles.tabsMain}></Tabs>
+          <Tabs items={items} style={{ width: '100%', color: '#fff', overflow: 'scroll' }} className={styles.tabsMain} onChange={(e:any) => onChangeTabs(e)}></Tabs>
         </Layout>
         <Modal
           open={openModal}
           closable
           onCancel={handleToggleCloseModal}
+          onOk={() => handleOkToAddUser()}
         >
           <Select style={{ width: '100%', marginTop: '50px' }} showSearch filterOption={filterOption} mode="tags" className={styles.fromChild} options={users}  onChange={selectedValues => {
               const selectedUsers = users.filter((user:any) => selectedValues.includes(user.value));
