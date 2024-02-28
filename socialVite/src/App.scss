@@ -40,11 +40,15 @@
 
 .element{
   width: 70%;
+  height: 100%;
   margin-right: 0;
   margin-left: auto;
+  overflow: scroll;
 }
 
 .loader{
+  margin-top:auto;
+  margin-bottom: auto;
   width : 100px;
   height: 100px;
   display: inline-block;
@@ -54,7 +58,7 @@
     width : 100px;
     height: 100px;
     border-radius: 50%;
-    border:2px solid #333;
+    border:2px solid #F52E5C;
     position: absolute;
     left:0;
     top: 0;

@@ -4,7 +4,7 @@ import './Login.modul.scss'
 import { authAPI } from '../api/api'
 import {Helmet} from "react-helmet";
 
-export const Login = () => {
+function Login() {
     const [error, setError] = useState()
     const formik = useFormik({
         initialValues:{
@@ -43,3 +43,5 @@ export const Login = () => {
         </div>
     )
 }
+
+export default Login;

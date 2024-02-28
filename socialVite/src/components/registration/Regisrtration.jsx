@@ -4,7 +4,7 @@ import { authAPI } from '../api/api'
 import './Registration.modul.scss'
 import { Helmet } from 'react-helmet'
 
-export const Registration = () => {
+const Registration = () => {
     const [error, setError] = useState()
     const formik = useFormik({
         initialValues:{
@@ -50,3 +50,5 @@ export const Registration = () => {
         </div>
     )
 }
+
+export default Registration

@@ -76,7 +76,7 @@ export const Header = () => {
                             <li><Link className={'button'} to={'/'}><img src={'/news.png'} alt={'Oops'} width={20} height={20} />Новости</Link></li>
                             <li><Link className={'button'} to={'/peoples'}><img src={'/peoples.png'} alt={'Oops'} width={20} height={20} />Люди</Link></li>
                             <li><Link className={'button'} to={'/messenger'}> <img src={'/Message.png'} alt={'Oops'} width={20} height={20} />Сообщения</Link></li>
-                            <li><Link className={'button'} to={`/photo/${me.login}`}><img src={'/Photo.png'} alt={'Oops'} height={20} />Фото</Link></li>
+                            <li><Link className={'button'} to={`/photos/${me.login}`}><img src={'/Photo.png'} alt={'Oops'} height={20} />Фото</Link></li>
                             <li><Link className={'button Exit'} onClick={logoutHandler}><img src={'/cross.png'} alt={'Oops'}  width={20} height={20}/>Выйти из уч. записи</Link></li>
                         </ul>
                     <a href={'/'} className='headerLogo'><img src={'/logoText.png'} width={80} height={80} style={{marginTop: -30}}/></a>

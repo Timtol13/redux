@@ -4,7 +4,7 @@ import { MessagesAPI, authAPI } from '../api/api'
 import {Helmet} from "react-helmet";
 import { Miniature } from '../ProfileMiniature/Miniature';
 
-export const Messenger = () => {
+function Messenger() {
   const [chats, setChats] = useState([])
   const [user, setUser] = useState('')
   const [users, setUsers] = useState([])
@@ -38,3 +38,5 @@ export const Messenger = () => {
     </div>
   )
 }
+
+export default Messenger;

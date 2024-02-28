@@ -8,7 +8,7 @@ export const  Miniature = (props) => {
     const [photo, setPhoto] = useState({})
     useEffect(() => {
         authAPI.getUser(login).then(e => {setUser(e.data[0])})
-        authAPI.getPhoto(login).then(e => {setPhoto(`http://localhost:7653/images/${login}/${e.data[0].filename}`)})
+        authAPI.getPhoto(login).then(e => {setPhoto(`http://localhost:7653/images/${login}/${e.data[0]?.filename}`)})
     }, [])
   return (
     <div className={'miniature'} href={`/profile/${login}`}>

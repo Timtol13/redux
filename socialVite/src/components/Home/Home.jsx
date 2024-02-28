@@ -7,7 +7,7 @@ import axios from 'axios'
 import {Helmet} from "react-helmet";
 import { io } from 'socket.io-client'
 
-export const Home = () => {
+function Home() {
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -73,7 +73,6 @@ export const Home = () => {
               // setName(e.data[0].username)
               // setSurname(e.data[0].surname)
             })
-            console.log(el.photo)
             return (
               <div className={'post'}>
                 <h2>{el.name} {el.surname}</h2>
@@ -127,3 +126,6 @@ export const Home = () => {
     </div>
   )
 }
+
+
+export default Home

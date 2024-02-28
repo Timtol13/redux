@@ -5,18 +5,14 @@ import { Modal, Box } from '@mui/material'
 import { Miniature } from '../ProfileMiniature/Miniature';
 import { useParams } from 'react-router';
 // import { PhotoAPI } from '../api/api';
-import StackGrid, { transitions } from "react-stack-grid";
 import { Helmet } from 'react-helmet';
 import { io } from 'socket.io-client'
+import  { Space, Input, Button } from 'antd'
 
 const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    minWidth: '65%',
-    maxWidth: '90%',
-    maxHeight: '95%',
-    minHeight: '55%',
     transform: 'translate(-50%, -50%)',
     bgcolor: '#fff',
     boxShadow: 24,
@@ -34,9 +30,7 @@ const styleFull = {
     borderRadius: 3,
 };
 
-const { scaleDown } = transitions;
-
-export const Photo = () => {
+const Photo = () => {
     const {login} = useParams()
     const [userPhotoes, setUserPhotoes] = useState([])
     const [filename, setFilename] = useState([])
@@ -71,6 +65,12 @@ export const Photo = () => {
         setCounter(counter - 1)
     }
 
+    socket.on('getComments', (data) => {
+        authAPI.getUserPhotoes(login).then((e) => {
+            setUserPhotoes(e.data)
+        })
+    })
+
     useEffect(() => {
         setIsLiked(filename?.like?.includes(login))
         setCounter(filename.like?.length)
@@ -95,66 +95,58 @@ export const Photo = () => {
             'login': login,
             'filename': filename?.filename
         }
-        CommentsAPI.sendCommentToPhoto(data).then(() => {
-            authAPI.getUserPhotoes(login).then(e => {
-                setUserPhotoes(e.data); 
-                e.data.forEach(el => { 
-                    if(el.id === filename.id) setFilename(el)
-                })
-            })
-        })
         setValue('')
+        socket.emit('commentPhoto', data)
     }
-    const getMargin = (i) => {
-        var marginPrev = 0
-        try{
-            for(let index = 10; index < userPhotoes.length; index += 5){
-                const img = new Image();
-                img.src = `http://localhost:7653/images/${login}/${userPhotoes[i-index].filename}`;
-                let del = img.width / 150
-                if((img.height / del) < 200){
-                    marginPrev = (200 - (img.height / del))
-                }
-            }
-        } catch(TypeError){
-            console.log('error')
-        }
-        try{
-            const img = new Image();
-            img.src = `http://localhost:7653/images/${login}/${userPhotoes[i-5 || i]?.filename}`;
-            let del = img.width / 150
-            if((img.height / del) < 200){
-                return (200 - (img.height / del) + (marginPrev > 0? marginPrev - 50 : 0))
-            }
-        } catch(err){
-            console.error(err)
-        }
-    } 
+    // const getMargin = (i) => {
+    //     var marginPrev = 0
+    //     try{
+    //         for(let index = 10; index < userPhotoes.length; index += 5){
+    //             const img = new Image();
+    //             img.src = `http://localhost:7653/images/${login}/${userPhotoes[i-index].filename}`;
+    //             let del = img.width / 150
+    //             if((img.height / del) < 200){
+    //                 marginPrev = (200 - (img.height / del))
+    //             }
+    //         }
+    //     } catch(TypeError){
+    //         console.log('error')
+    //     }
+    //     try{
+    //         const img = new Image();
+    //         img.src = `http://localhost:7653/images/${login}/${userPhotoes[i-5 || i]?.filename}`;
+    //         let del = img.width / 150
+    //         if((img.height / del) < 200){
+    //             return (200 - (img.height / del) + (marginPrev > 0? marginPrev - 50 : 0))
+    //         }
+    //     } catch(err){
+    //         console.error(err)
+    //     }
+    // } 
   return (
     <div  className={'photoMainDiv'}>
         <Helmet>
           <title>Фото</title>
       </Helmet>
-       <StackGrid
-            columnWidth={150}
-            className={'stackLayout'}
-            itemComponent={"div"}
-            >
+       <div className='photos'>
             { 
                 userPhotoes? userPhotoes.sort((a, b) => a.id - b.id).map((el, i) => {
                     return (
-                        <img key={el.id} style={{ marginTop: `-${getMargin(i)}px` }} onClick={() => {openModal(); setImageToShow(`http://localhost:7653/images/${login}/${el.filename}`); setFilename(el); setIndex(i)}} src={`http://localhost:7653/images/${login}/${el.filename}`}/>
+                        // style={{ marginTop: `-${getMargin(i)}px` }}
+                        <div className={'photo'}>
+                            <img key={el.id}  onClick={() => {openModal(); setImageToShow(`http://localhost:7653/images/${login}/${el.filename}`); setFilename(el); setIndex(i)}} src={`http://localhost:7653/images/${login}/${el.filename}`}/>
+                        </div>
                     )
                 }) : ''
             }
-        </StackGrid>
+        </div>
         <Modal
             open={open}
             onClose={closeModal}
             >
-            <Box sx={style}>
-                <div className={'showed'}>
-                    <button className='arrow' onClick={() => {
+            <>
+                <div className='arrows'>
+                    <button className='arrow arrow-prev' onClick={() => {
                         try{
                             setFilename(userPhotoes[index-1]); 
                             setImageToShow(`http://localhost:7653/images/${login}/${userPhotoes[index-1].filename}`); 
@@ -164,7 +156,23 @@ export const Photo = () => {
                             setImageToShow(`http://localhost:7653/images/${login}/${userPhotoes[index].filename}`); 
                             setIndex(index)
                         }
-                    }}>&#060;</button>
+                    }}><h1>&#060;</h1>
+                    </button>
+                    <button className='arrow arrow-next' onClick={() => {
+                        try{
+                            setFilename(userPhotoes[index+1]); 
+                            setImageToShow(`http://localhost:7653/images/${login}/${userPhotoes[index+1].filename}`); 
+                            setIndex(index+1)
+                        } catch (TypeError){
+                            setFilename(userPhotoes[index]); 
+                            setImageToShow(`http://localhost:7653/images/${login}/${userPhotoes[index].filename}`); 
+                            setIndex(index)
+                        }
+                        }}><h1>&gt;</h1>
+                    </button>
+                </div>
+            <Box sx={style}>
+                <div className={'showed'}>
                     <div className='showed_img'>
                     <img onClick={openFull} src={imagetoShow}/>
                     </div>
@@ -172,9 +180,10 @@ export const Photo = () => {
                         <Miniature login={login} />
                         <button onClick={() => {
                             // filename.like?.includes(user.login)
-                            isLiked? dislike(filename.id, user.login) : like(login, user.login, userPhotoes[index].filename)
+                            console.log(userPhotoes[index].filename);
+                            filename.like?.includes(user.login)? dislike(filename.id, user.login) : like(login, user.login, userPhotoes[index].filename)
                         }}>
-                        <svg fill={isLiked ? '#ff0000': '#000000'} height="40px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" link="http://www.w3.org/1999/xlink" 
+                        <svg fill={filename.like?.includes(user.login) ? '#ff0000': '#000000'} height="40px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" link="http://www.w3.org/1999/xlink" 
                             viewBox="0 0 471.701 471.701" >
                         <g>
                             <path d="M433.601,67.001c-24.7-24.7-57.4-38.2-92.3-38.2s-67.7,13.6-92.4,38.3l-12.9,12.9l-13.1-13.1
@@ -201,7 +210,36 @@ export const Photo = () => {
                             })}
                             </div>
                             <div className={'inputBar'}>
-                                <input
+                                <Space direction="vertical" style={{
+                                    width: '100%'
+                                }}>
+                                    <Space.Compact style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        gap: 0,
+                                    }}>
+                                        <Input placeholder='Введите комментарий' style={{
+                                            height: '100%',
+                                            width: '70%',
+                                            marginRight: '0',
+                                            borderRadius:'5px 0 0 5px'
+                                        }}
+                                        onChange={(e) => {setValue(e.target.value);}}
+                                        />
+                                        <Button style={{
+                                            height: '100%',
+                                            width: '30%',
+                                            margin: '0',
+                                            borderRadius:'0 5px 5px 0'
+                                        }} 
+                                        onClick={() => sendComment()}
+                                        >Отправить</Button>
+                                    </Space.Compact>
+                                </Space>
+                                {/* <input
                                     type='text'
                                     id='textbox'
                                     value={value}
@@ -214,27 +252,17 @@ export const Photo = () => {
                                 />
                                     <label className="input-file">
                                         <input type="file" name="file" onChange={(e) => {
-                                            //upload(e.target.files, e.target.files[0].name)
+                                            // upload(e.target.files, e.target.files[0].name)
                                         }}/>		
                                         <span><img src={'/file.png'} width={30} height={30}/></span>
                                     </label>
-                                <button id={'btn'} onClick={sendComment}>Отправить</button>
+                                <button id={'btn'} onClick={sendComment}>Отправить</button> */}
                             </div>
                         </div>
                     </div>
-                    <button className='arrow' onClick={() => {
-                        try{
-                            setFilename(userPhotoes[index+1]); 
-                            setImageToShow(`http://localhost:7653/images/${login}/${userPhotoes[index+1].filename}`); 
-                            setIndex(index+1)
-                        } catch (TypeError){
-                            setFilename(userPhotoes[index]); 
-                            setImageToShow(`http://localhost:7653/images/${login}/${userPhotoes[index].filename}`); 
-                            setIndex(index)
-                        }
-                        }}>&gt;</button>
                 </div>
             </Box>
+            </>
         </Modal>
         <Modal
             open={fullPhoto}
@@ -247,3 +275,5 @@ export const Photo = () => {
     </div>
   )
 }
+
+export default Photo;

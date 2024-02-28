@@ -5,7 +5,7 @@ import { useParams } from 'react-router'
 import { createStore } from '../../redux/store/createStore'
 import { Box, Modal } from '@mui/material'
 import { Helmet } from 'react-helmet'
-import { UsersNews } from '../UsersNews/UsersNews'
+import UsersNews from '../UsersNews/UsersNews'
 
 const style = {
     position: 'absolute',
@@ -19,7 +19,7 @@ const style = {
     borderRadius: 3,
   };
 
-export const Profile = () => {
+function Profile() {
     const [user, setUser] = useState({})
     const userStorage = JSON.parse(localStorage.getItem('user')).login
     const { login } = useParams()
@@ -28,7 +28,7 @@ export const Profile = () => {
     const [res, setRes] = useState(null)
     useEffect(()=>{
         authAPI.getUser(login).then(e => {setUser(e.data[0])})
-        authAPI.getPhoto(login).then(e => {setPhoto(`http://localhost:7653/images/${login}/${e.data[0].filename}`)})
+        authAPI.getPhoto(login).then(e => {setPhoto(`http://localhost:7653/images/${login}/${e.data[0]?.filename}`)})
         setRes(photo)
     }, [])
     const uploadHandler = (event) => {
@@ -71,10 +71,10 @@ export const Profile = () => {
                 <div className={'profile_info'}>
                     <h2>{Name} {Surname}</h2>
                     <p style={{ overflow: !toggle? 'hidden' : 'visible', maxHeight: !toggle? '50px': '2500px', transition: 'max-height .9s'}}>
-                        {Description}
                         <button className='open_description' onClick={() => {setToggle(!toggle)}}>
                             {!toggle? '↓' : '↑'}
                         </button>
+                        {Description}
                     </p>
                     <div className='buttons'>
                     {userStorage.login === login? 
@@ -130,3 +130,5 @@ export const Profile = () => {
         </div>
     )
 }
+
+export default Profile;

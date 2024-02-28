@@ -5,6 +5,7 @@ import {io} from 'socket.io-client';
 import { MessagesAPI, authAPI } from '../../api/api';
 import {Helmet} from "react-helmet";
 import { Miniature } from '../../ProfileMiniature/Miniature';
+import { parseISO, compareAsc } from 'date-fns';
 
 // export const fetchMessages = (userFrom, userTo, setMessages) => {
 //     Promise.all([
@@ -20,7 +21,7 @@ import { Miniature } from '../../ProfileMiniature/Miniature';
 //       });
 //   };
 
-export const Chat = () => {
+export default function Chat() {
   const API_URL = 'http://localhost:7653';
   const SOCKET_URL = 'ws://localhost:7653';
 
@@ -43,6 +44,9 @@ export const Chat = () => {
 
       const allMessages = [...userToMessages.data, ...userFromMessages.data];
       setMessages(allMessages);
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+      }
     } catch (error) {
       console.error('Ошибка при получении сообщений:', error);
     }
@@ -50,26 +54,32 @@ export const Chat = () => {
 
   useEffect(() => {
     authAPI.getUser(login, 'password').then(e => setUser(e.data[0]));
-    socket.on('connect', () => {
-      console.log('Connected to server');
-      socket.emit(JSON.stringify({ type: 'connectToChat', login: user.login }));
-    });
-  
-    socket.on('newMessage', (event) => {
-      console.log('qwe');
-      fetchMessages()
-    });
-  
-    socket.on('error', (error) => {
-      console.log('Socket произошла ошибка:', error);
-    });
-  
-    socket.on('close', (event) => {
-      console.log('Socket закрыт:', event);
-    });
-  
     fetchMessages();
+    return () => {
+      socket.on('connect', () => {
+        console.log('Connected to server');
+        // socket.emit(JSON.stringify({ type: 'connectToChat', login: user.login }));
+      });
+    
+      // socket.on('newMessage', (event) => {
+      //   console.log('qwe')
+      //   fetchMessages()
+      // });
+    
+      socket.on('error', (error) => {
+        console.log('Socket произошла ошибка:', error);
+      });
+    
+      socket.on('close', (event) => {
+        console.log('Socket закрыт:', event);
+      });
+    }
   }, []);
+
+  socket.on('newMessage', (event) => {
+    console.log('new message');
+    if(event.userFrom === user.login || event.userTo === user.login) fetchMessages()
+  });
   
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -83,10 +93,10 @@ export const Chat = () => {
         userFrom: user.login,
         userTo: login,
         message: value,
-        socketId: socket.id
       };
       socket.emit('message', JSON.stringify({ type: 'message', content: message }));
       setValue('');
+      // fetchMessages()
     }
     else {
       console.error('WS has been closed')
@@ -114,7 +124,7 @@ export const Chat = () => {
       <h3><Miniature login={login}/></h3>
       <div className='content'>
         <div className={'messages'}>
-          {messages?.sort((el, el1) => Date.parse(el.date) - Date.parse(el1.date))?.map(mes => (
+        {messages?.sort((el, el1) => compareAsc(parseISO(el.date), parseISO(el1.date)))?.map(mes => (
             <div key={mes.id}>
                 <div className={`message ${mes.userfrom === user.login ? 'usFr' : ''}`}>
                   <h3 className='sender'>{mes.userfrom}</h3><br />

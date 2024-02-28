@@ -4,7 +4,7 @@ import { MessagesAPI } from '../api/api'
 import { Miniature } from '../ProfileMiniature/Miniature'
 import { Helmet } from 'react-helmet'
 
-export const Peoples = () => {
+const Peoples = () => {
   const [peoples, setPeoples] = useState([])
   const user =  JSON.parse(localStorage.getItem('user')).login
   useEffect(() => {
@@ -33,5 +33,6 @@ export const Peoples = () => {
     </div>
   )
 }
+export default Peoples;
 
 //<Miniature login={login} />

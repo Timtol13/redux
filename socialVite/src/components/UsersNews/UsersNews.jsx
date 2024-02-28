@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import { PostsAPI } from '../api/api'
 import './UsersNews.scss'
 
-export const UsersNews = (props) => {
+const UsersNews = (props) => {
     const { user, name, surname } = props
     const [posts, setPosts] = useState([])
     useEffect(() => {
@@ -45,3 +45,5 @@ export const UsersNews = (props) => {
     </div>
   )
 }
+
+export default UsersNews;
