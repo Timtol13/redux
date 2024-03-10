@@ -54,6 +54,10 @@ const Photo = () => {
 
     const [counter, setCounter] = useState()
 
+    socket.on('likeEvent', (data) => {
+        console.log(data)
+    })
+
     const like = (login, likeTo, filename) => {
         socket.emit('likePhoto', {login, likeTo, filename})
         setIsLiked(true)
@@ -181,9 +185,9 @@ const Photo = () => {
                         <button onClick={() => {
                             // filename.like?.includes(user.login)
                             console.log(userPhotoes[index].filename);
-                            filename.like?.includes(user.login)? dislike(filename.id, user.login) : like(login, user.login, userPhotoes[index].filename)
+                            isLiked? dislike(filename.id, user.login) : like(login, user.login, userPhotoes[index].filename)
                         }}>
-                        <svg fill={filename.like?.includes(user.login) ? '#ff0000': '#000000'} height="40px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" link="http://www.w3.org/1999/xlink" 
+                        <svg fill={isLiked ? '#ff0000': '#000000'} height="40px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" link="http://www.w3.org/1999/xlink" 
                             viewBox="0 0 471.701 471.701" >
                         <g>
                             <path d="M433.601,67.001c-24.7-24.7-57.4-38.2-92.3-38.2s-67.7,13.6-92.4,38.3l-12.9,12.9l-13.1-13.1
